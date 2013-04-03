@@ -1,0 +1,256 @@
+/*The form wrapper defines the 3d space and this has a perspective*/
+#form-wrapper{
+	
+	width:275px;
+	height:300px;
+	margin-top:170px;
+	margin-left:530px;
+	position: relative;
+
+	-moz-perspective:800px;
+	-webkit-perspective:800px;
+	perspective:200px;
+}
+
+
+#form-wrapper form{
+
+	/*The width and the height is filled so that vanishing point is in the middle*/
+	width:100%;
+	height:100%;
+	position: absolute;
+	top: 0px;
+	left:0px;
+
+	/*form wrappers perspective only applies to the descendant children*/
+	/*To be able to apply to the subsequent children this is done*/
+
+	-webkit-transform-style:preserve-3d;
+	-moz-transform-style:preserve-3d;
+	transform-style:preserve-3d;
+
+	/*If this is not used when the form is flipped , on the other side the inverted version of the flipped side is shown and this doesnt look good*/
+	-webkit-backface-visibility:hidden;
+	-moz-backface-visibility:hidden;
+	 backface-visibility:hidden;
+
+
+	/*Applying a transition*/
+	 -webkit-transition:1.1s;
+	 -moz-transition:1.1s;
+
+
+	 -webkit-animation: flash 2s infinite;
+	  -moz-animation: flash 2s infinite;
+
+}
+
+
+
+div.input_wrapper{
+	position:relative;
+	width:inherit;
+	/*background:white;*/
+	margin-top:75px;
+}
+
+div.input_wrapper input{
+	margin-left:30px;
+	width:215px;
+	height:30px;
+	border-radius:3px;
+	border-bottom:1px solid rgba(7,11,82,1);
+	border-top:1px solid white;
+	border-right:none;
+	border-left:none;
+	margin-top:2px;
+	color: #2f2f2f;
+	font-family: 'Playball', cursive;
+	font-size: 1em;
+	outline-color:rgba(7,11,82,1);
+
+}
+
+/*These are used to style the placeholder*/
+::-webkit-input-placeholder{
+	
+	color:#2f2f2f;	
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+	font-family: 'Playball', cursive;
+	font-size:1em;
+
+
+	
+}
+
+::-moz-placeholder
+{
+	color:#2f2f2f;	
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+	font-family: 'Playball', cursive;
+
+
+}
+
+:-moz-placeholder{
+	
+	color:#2f2f2f;	
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+	font-family: 'Playball', cursive;
+
+}
+
+#sign-up{
+	
+	/*background:rgba(131,131,131,0.8);*/
+	background: -moz-linear-gradient(top, rgba(181,189,200,1) 0%, rgba(130,140,149,1) 36%, rgba(40,52,59,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(181,189,200,1)), color-stop(36%,rgba(130,140,149,1)), color-stop(100%,rgba(40,52,59,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); /* Chrome10+,Safari5.1+ */
+    opacity: 0.85;
+	border-radius:9px;
+	z-index:100;
+}
+
+
+#sign-in{
+
+	opacity: :0px;
+	/*background:rgba(131,131,131,0.8);*/
+	background: -moz-linear-gradient(top, rgba(181,189,200,1) 0%, rgba(130,140,149,1) 36%, rgba(40,52,59,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(181,189,200,1)), color-stop(36%,rgba(130,140,149,1)), color-stop(100%,rgba(40,52,59,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); /* Chrome10+,Safari5.1+ */
+	border-radius:9px;
+	opacity: 0.85;
+	z-index:1;
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+
+}
+
+#form-wrapper.flipped #sign-up{
+
+	opacity: 0px;
+	-webkit-transform:rotateY(-180deg);
+	-moz-transform:rotateY(-180deg);
+
+}
+
+#form-wrapper.flipped #sign-in{
+	opacity:0px;
+	-webkit-transform:rotateY(0deg);
+	-moz-transform:rotateY(0deg);	
+}
+
+
+/*This is the styling of the heading in each of the forms*/
+#form-heading{
+
+	position:absolute;
+	font-family: 'Playball', cursive;
+	font-weight:bold;
+	color:#2f2f2f;
+	font-size:2em;
+	margin-left:53px;
+	margin-top:15px;
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+
+}
+
+/*Styling the buttons*/
+#sign-button
+{
+	margin-top:12px;
+	margin-left:80px;
+	margin-bottom:7px;
+	width:100px;
+	height:35px;
+	border-radius:5px;
+	border-bottom:none;
+	border-top:none;
+	background-image: -moz-linear-gradient(bottom, rgb(74,81,158) 42%, rgb(67,77,143) 71%);
+	background-image: -webkit-linear-gradient(bottom, rgb(74,81,158) 42%, rgb(67,77,143) 71%);
+	cursor:pointer;
+	opacity:0.85;
+	font-family:'PlayBall' , cursive;
+	font-size: 1.3em;
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+	color:rgba(7,11,82,1);
+	font-weight: bold;
+
+	-webkit-animation: flash 2s infinite;
+	-moz-animation: flash 2s infinite;
+
+}
+
+#sign-button:hover{
+	opacity:1.5;
+}
+
+#already-have-account{
+	position: relative;
+	color:rgba(7,11,90,1);
+	text-shadow:2px 2px 2px rgba();
+	font-family:'PlayBall' , cursive;
+	font-size:15px;	
+	padding-left:10px;
+	padding-top: 10px;
+}
+
+#have-sign-in{
+	font-weight:bold;
+	color:rgba(7,11,82,1);
+	text-shadow:1px 1px 1px rgba(0,0,0,0.3);
+	cursor: pointer;
+}
+
+
+#have-sign-in:hover{
+	color: blue;
+}
+#go-back{
+	color:rgba(7,11,82,1);
+	cursor: pointer;
+	top:10px;
+}
+
+#go-back:hover{
+	color:blue;
+}
+
+
+@-webkit-keyframes flash{
+
+	0%{
+		box-shadow: 0 0 1px rgba(7,11,82,1);
+
+	}
+	50%{
+		box-shadow: 0 0 10px rgba(7,11,82,1);
+
+	}
+
+	100%{
+		box-shadow: 0 0 1px rgba(7,11,82,1);
+
+	}
+
+}
+
+
+@-moz-keyframes flash{
+
+	0%{
+		box-shadow: 0 0 1px rgba(7,11,82,1);
+
+	}
+	50%{
+		box-shadow: 0 0 10px rgba(7,11,82,1);
+
+	}
+
+	100%{
+		box-shadow: 0 0 1px rgba(7,11,82,1);
+
+	}
+
+}

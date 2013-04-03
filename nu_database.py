@@ -1,8 +1,8 @@
 import re
 import sys
 from datetime import datetime
-class nudb:
 
+class nudb:
 	#method save() to insert entries into the database
 	def __init__(self):
 		self.log_fh = open('logs/log.txt','a')
@@ -112,8 +112,10 @@ class nudb:
 				for eachEntry in f:
 					selected_entries.append(eval(eachEntry))
 
-				self.__display(selected_entries)
 				f.close()
+				self.__writelog(query,len(selected_entries))
+				return self.__return_articles(selected_entries)
+				
 
 			elif(groups[0] == None and (groups[5] == None and groups[6] == None and groups[7] == None  and groups[8] == None and groups[9] == None)) :
 				#This means that the query is with the a single projection and there is no conjunction
@@ -137,19 +139,30 @@ class nudb:
 				
 				if selection == 'title' or selection == 'articles':	
 					f.close()
-					self.__selection(selected_entries, selection)
+					self.__writelog(query,len(selected_entries))
+					return self.__selection(selected_entries, selection)
 				else:
 
 					if len(selected_entries) != 0:
+						#This is a list that is used to return the information as JSON
+						json_list = []
+
 						for eachEntry in selected_entries:
-							print '#'*75
-							print str(selection).upper()+": " +eachEntry[selection]
-							print '#'*75
-							print '\n'
-						f.close();				
+							# print '#'*75
+							# print str(selection).upper()+": " +eachEntry[selection]
+							json_list.append({str(selection):str(eachEntry[selection])})
+							# print '#'*75
+							# print '\n'
+
+						f.close();
+						self.__writelog(query,len(selected_entries))
+						return json_list				
 					else:
-						print "No Matching article"
-				
+						json_list = [{"error_code":"502"}]
+						self.log_fh.writelines("Query:"+query+"No matching article"+str(datetime.now())+"\n")
+						return json_list
+						# print "No Matching article"
+
 
 			else:
 				#There is a second projection with a conjuction or a disjunction
@@ -174,38 +187,50 @@ class nudb:
 				if value2 == "min":
 					value2 =str(min(self.__find_max_min(projection2)))
 
+				
 				f = open("saved_entries/entries.txt")
-
 				for eachEntry in f:
 					if self.__filter_entries(eval(eachEntry),projection1,operator1,value1,conjuction_disjunction,projection2,operator2,value2):
 						selected_entries.append(eval(eachEntry))
 				
 				if selection == 'title' or selection == 'articles':	
 					f.close()
-					self.__selection(selected_entries, selection)
+					self.__writelog(query,len(selected_entries))
+					return self.__selection(selected_entries, selection)
 				else:
-
 					if len(selected_entries) != 0:
 						for eachEntry in selected_entries:
-							print '#'*50
-							print str(selection).upper()+": " +eachEntry[selection]
-							print '#'*50
-							print '\n'
+							# print '#'*50
+							# print str(selection).upper()+": " +eachEntry[selection]
+							json_list.append({str(selection):str(eachEntry[selection])})
+							# print '#'*50
+							# print '\n'
 						f.close();
+						self.__writelog(query,len(selected_entries))
+						return json_list
 					else:
-						print "No Matching article"
+						json_list = [{"error_code":"502"}]
+						self.log_fh.writelines("Query:"+query+"No matching article"+str(datetime.now())+"\n")
+						return json_list
+						# print "No Matching article"
 
 			end = datetime.now()
 			print "Fetched "+str(len(selected_entries))+" entries in: "+str(end - start)+' second'
 			self.log_fh.writelines("Query: "+query+" fetched "+str(len(selected_entries))+" entries @ "+str(datetime.now())+"\n")
 		else:
 
-			print "Invalid query"
+			#This means this is an invalid query
+			json_list = []
+			#print "Invalid query"
 			self.log_fh.writelines("Query: "+query+" Invalid query @ "+str(datetime.now())+"\n")
+			json_list.append({'error_code':"500"})
+			return json_list
 
 
 		
 	def __selection(self,entries_list,selection):
+		# This is called only when the selection is articles or titles
+		#This makes sure that the file content.txt has to be really opened
 		selection = selection.lower()
 		
 		id_list = []
@@ -220,29 +245,35 @@ class nudb:
 			return
 
 		f = open('saved_content/content.txt','r')
+		json_list = []
 		for eachEntry in f:
 			each_entry = eval(eachEntry)
 			if i < len_id_list:
 				if each_entry['id'] == id_list[i]:
 					if selection == "title":
-						print '#'*75
-						print str(selection.upper())+": "+each_entry[selection]
+						# print '#'*75
+						# print str(selection.upper())+": "+each_entry[selection]
+						json_list.append(dict(title=str(each_entry['title'])))
 						i = i +1
-						print '#'*75
-						print '\n'
+						# print '#'*75
+						# print '\n'
 						
 					else:
-						print '#'*75
-						print "TITLE: " + each_entry['title']
-						print "DESCRIPTION: "+each_entry['description']
-						print "CONTENT: "+each_entry['content']
+						#the selection is articles
+						# print '#'*75
+						json_list.append(dict(title=str(each_entry['title']),description=str(each_entry['description']),content=str(each_entry['content'])))
+						# print "TITLE: " + each_entry['title']
+						# print "DESCRIPTION: "+each_entry['description']
+						# print "CONTENT: "+each_entry['content']
 						i = i+1
-						print '#'*75
-						print '\n'
+						# print '#'*75
+						# print '\n'
 						
 
 			else:
 				break
+
+		return json_list
 								 
 	def __filter_entries(self,entry,projection1,operator1,value1,conjunction_disjunction=None,projection2=None,operator2=None,value2=None):
 
@@ -275,7 +306,7 @@ class nudb:
 						operator2 = '=='
 					return eval((str(value1 in entry[projection1])) + " " +conjunction_disjunction+" "+str(eval(entry[projection2]+operator2+value2)))
 			except NameError:
-				return Flase
+				return False
 
 			try:
 				if(isinstance(entry[projection1],str)) and (isinstance(entry[projection2],tuple)):
@@ -306,16 +337,13 @@ class nudb:
 		m = re.match(regex,query)
 		return m
 
-	def __display(self,list_):
+	def __return_articles(self,list_):
+		json_list = []
 		
 		for eachEntry in list_:
-			print '#' * 75
-			print "TITLE: "+str(eachEntry['title'])
-			print "DESCRIPTION: "+str(eachEntry['description'])
-			print "CONTENT: "+str(eachEntry['content'])
-			print '#' * 75
-			print '\n'
-			
+			json_list.append(dict(title=str(eachEntry['title']),description=str(eachEntry['description']),content=str(eachEntry['content'])))
+		return json_list			
+
 
 	def __find_max_min(self,likes_comments):
 		likes_comments.lower()
@@ -332,6 +360,11 @@ class nudb:
 
 	def __del__(self):
 		self.log_fh.close()
+
+	def __writelog(self,query,no_of_selected_entries):
+		self.log_fh.writelines("Query: "+query+" fetched "+str(no_of_selected_entries)+" entries @ "+str(datetime.now())+"\n")
+
+
 
 
 if __name__ == "__main__":
