@@ -24,7 +24,7 @@ class HTTPClient(asyncore.dispatcher):
         for eachLine in list_:
             dictionary = eval(eachLine)
             i=i+1
-            print i
+            # print i
             print dictionary
         f.close()
         self.get_input()       

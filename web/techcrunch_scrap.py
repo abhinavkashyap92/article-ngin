@@ -1,12 +1,8 @@
 import urllib
 import re
-import os
 from datetime import datetime
 from datetime import timedelta
-import threading
 from db_config import get_connection
-
-
 
 def scrap(url):
 
@@ -37,9 +33,8 @@ def scrap(url):
 
 	article_post_regex = r'<div id="post-(\d+)"(.*?)>(.*?)</div><!-- #post-## -->'
 	#This heavily depends on the each post ending with the <!-- #post-## --> tag
-	#This is how we are asked to do and it is done....no question should be asked and none will be answered
 
-	# The top article is got by the first index of the list that is returned by thr following regex
+	# The top article is got by the first index of the list that is returned by the following regex
 	# Every element of the list is a tuple 
 	# The first element of the tuple gives the article identification provided by the website
 	# The last one gives the actual contents in the div
